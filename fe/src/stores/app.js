@@ -11,7 +11,7 @@ export const useAppStore = defineStore('app', {
     //
     token: '',
     userData: {},
-    apiServer: `http://${import.meta.env.VITE_API_URL}:${import.meta.env.VITE_API_PORT}/api`,
+    apiServer: `http://${import.meta.env.VITE_SERVER_IP}:${import.meta.env.VITE_SERVER_PORT}/api`,
     myAlert: swal.mixin({
       toast: true,
       position: 'top-end',
