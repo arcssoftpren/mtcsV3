@@ -1,0 +1,21 @@
+.swal-custom-zindex {
+  z-index: 9999 !important;
+}
+
+.inspectionHeader {
+  background-color: #f5f5f5;
+  width: 100%;
+  border-collapse: collapse;
+}
+.inspectionHeader td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.inspectionHeader th {
+  background-color: #e7e7e7;
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
