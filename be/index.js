@@ -8,8 +8,8 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const app = express();
 
-const IP = process.env.IP || "127.0.0.1";
-const PORT = process.env.PORT || 3000;
+const IP = process.env.SERVER_IP || "127.0.0.1";
+const PORT = process.env.SERVER_PORT || 3000;
 
 app.use(
   cors({ origin: "*", methods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"] })
