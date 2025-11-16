@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 16 Nov 2025 pada 12.33
+-- Generation Time: 16 Nov 2025 pada 13.43
 -- Versi Server: 10.1.13-MariaDB
 -- PHP Version: 5.6.23
 
@@ -220,7 +220,14 @@ INSERT INTO `roleaccess` (`accessId`, `roleId`, `path`) VALUES
 (15, 1, '/inspections/weekly'),
 (16, 1, '/inspections/monthly'),
 (17, 1, '/inspections/abnormalities'),
-(18, 1, '/inspections/pdfreport');
+(18, 1, '/inspections/pdfreport'),
+(19, 3, '/inspections/pdfreport'),
+(20, 3, '/inspections/monthly'),
+(21, 3, '/inspections/daily'),
+(22, 3, '/inspections/weekly'),
+(23, 3, '/inspections/abnormalities'),
+(24, 3, '/setups/users'),
+(25, 3, '/setups/tools');
 
 -- --------------------------------------------------------
 
@@ -322,7 +329,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`userId`, `userName`, `userNik`, `userPassword`, `roleId`) VALUES
 (3, 'Adnan', 'system', '$2b$08$WK/Pmj7l2RIO8cu/OpWMd.u1ExnYhnExCqFCiLjsWI703jqj4rvla', 1),
-(13, 'Admin Utama', 'admin', '$2b$10$PJSqhhRmf4y0JsxMfT69y.kKXBI3OUcXiK0z.Ir4WqJ4tU5AP4q9G', 3),
+(13, 'Admin Utama', 'admin', '$2b$10$7CmWLQ12A1EweTOzHHLIwejdXT037CE2nuigT2fb39Pi2TEBQsgEq', 3),
 (14, 'test', '111', '$2b$10$J/42iJYR11TpuBJwnin4KOdf6VQAm55h592Mm/eM3B8BV7dWSHoLG', 3);
 
 -- --------------------------------------------------------
@@ -513,7 +520,7 @@ ALTER TABLE `ranks`
 -- AUTO_INCREMENT for table `roleaccess`
 --
 ALTER TABLE `roleaccess`
-  MODIFY `accessId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `accessId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 --
 -- AUTO_INCREMENT for table `roles`
 --
