@@ -23,7 +23,7 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => res.send("Hello World!"));
+// app.get("/", (req, res) => res.send("Hello World!"));
 
 const connection = require("./config/database").connection;
 connection.getConnection((err) => {
