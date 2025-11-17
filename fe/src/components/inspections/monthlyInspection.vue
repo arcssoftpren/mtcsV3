@@ -54,7 +54,10 @@
           v-for="(date, dateIndex) in dates"
           :key="dateIndex"
         >
-          <div v-if="getData(date, method)" class="d-flex justify-center">
+          <div
+            v-if="!getData(date, method).unused"
+            class="d-flex justify-center"
+          >
             <v-icon
               :color="
                 getData(date, method)?.judgement == 1 ? 'success' : 'error'
@@ -70,6 +73,9 @@
             >
               {{ getData(date, method)?.value }} {{ method.unit }}
             </v-chip>
+          </div>
+          <div v-else>
+            {{ getData(date, method.methodId).unused ? '-' : '' }}
           </div>
         </td>
       </tr>
@@ -210,7 +216,18 @@ const getData = (date, method) => {
         : finalData?.value,
   };
 
-  return finalData ? result : null;
+  let unused = false;
+
+  if (!finalData) {
+    unused = props.inspectionsData.unused.find(
+      (f) => moment(f.date).format('DD') == date
+    );
+    if (unused) {
+      console.log(unused);
+    }
+  }
+
+  return finalData ? result : unused ? { unused: true } : '';
 };
 
 onMounted(() => {

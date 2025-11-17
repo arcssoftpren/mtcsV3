@@ -36,25 +36,24 @@
         />
       </template>
       <template #item.actions="{ item }">
-        <v-btn
-          @click="openDialog('inspect', item)"
-          variant="outlined"
-          rounded="pill"
-          block
-        >
-          check now
-        </v-btn>
+        <v-btn-group variant="outlined" rounded="pill">
+          <v-btn @click="openDialog('inspect', item)"> check now </v-btn>
+          <v-btn color="warning" @click="openDialog('notused', item)">
+            Not Used
+          </v-btn>
+        </v-btn-group>
       </template>
     </v-data-table>
     <v-dialog
       v-model="dialog"
       scrollable
       persistent
-      fullscreen
+      :fullscreen="dialogData.key == 'inspect'"
       :overlay="false"
       transition="dialog-transition"
+      max-width="600"
     >
-      <v-card>
+      <v-card v-if="dialogData.key == 'inspect'">
         <template #append>
           <v-btn @click="dialog = false" flat icon class="mt-2 ms-2">
             <v-icon>mdi-close</v-icon>
@@ -68,6 +67,44 @@
             @submit-success="refresh"
             :tool-data="selected"
           ></daily-inspections>
+        </template>
+      </v-card>
+      <v-card v-else class="text-center">
+        <template #text>
+          <h1 class="text-h5">
+            You are about to mark this tool as unused today
+          </h1>
+          <h1 class="text-h4">{{ selected.toolName }}</h1>
+          <p>{{ selected.regNumber }}</p>
+          <v-icon size="120" color="warning" class="my-2">
+            mdi-help-circle-outline
+          </v-icon>
+          <div class="my-2">
+            <v-divider></v-divider>
+          </div>
+          <v-row>
+            <v-col cols="6">
+              <v-btn
+                variant="outlined"
+                rounded="pill"
+                block
+                @click="dialog = false"
+              >
+                Cancel
+              </v-btn>
+            </v-col>
+            <v-col cols="6">
+              <v-btn
+                @click="unused"
+                variant="outlined"
+                rounded="pill"
+                block
+                color="red"
+              >
+                Confirm
+              </v-btn>
+            </v-col>
+          </v-row>
         </template>
       </v-card>
     </v-dialog>
@@ -96,7 +133,7 @@ const openDialog = (key, item) => {
       dialogData.title = 'Inspect Tool';
       dialogData.subtitle = moment().format('dddd, MMMM Do YYYY');
       break;
-    case 'edit':
+    case 'notused':
       selected.value = item;
       break;
     case 'delete':
@@ -104,6 +141,28 @@ const openDialog = (key, item) => {
       return;
   }
   dialog.value = true;
+};
+
+const unused = async () => {
+  try {
+    const toolId = selected.value.toolId;
+    const date = moment().format('YYYY-MM-DD');
+    const response = await store.fetchData(
+      {
+        toolId,
+        date,
+        inspector: store.userData.userId,
+      },
+      '/inspections/notused',
+      'post'
+    );
+
+    store.myAlert.fire(response);
+    dialog.value = false;
+    refresh();
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const refresh = async () => {

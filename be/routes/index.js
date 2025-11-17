@@ -107,6 +107,7 @@ router.get(
   validateJWT,
   inspectionControllers.getDailyInspections
 );
+router.post("/inspections/notused", validateJWT, inspectionControllers.notused);
 router.post(
   "/inspections/daily/:toolId",
   validateJWT,

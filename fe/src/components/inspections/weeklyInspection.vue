@@ -58,30 +58,38 @@
               {{ method.label }}
             </td>
             <td
+              :placeholder="getData(date, method.methodId)"
               v-for="(date, dIndex) in dates"
               :key="dIndex"
               :class="`text-center text-no-wrap ${getData(date, method.methodId).judgement == 0 ? 'bg-pink-lighten-4' : getData(date, method.methodId).judgement == 1 ? 'bg-green-lighten-4' : ''}`"
             >
-              <v-icon
-                v-if="getData(date, method.methodId).dataType == 'bool'"
-                :color="
-                  getData(date, method.methodId).judgement == 1
-                    ? 'green'
-                    : getData(date, method.methodId).judgement == 0
-                      ? 'red'
-                      : ''()
-                "
-              >
-                {{
-                  getData(date, method.methodId).judgement == 1
-                    ? 'mdi-circle-outline'
-                    : getData(date, method.methodId).judgement == 0
-                      ? 'mdi-close'
-                      : 'mdi-minus'
-                }}
-              </v-icon>
+              <div v-if="getData(date, method.methodId).dataType">
+                <v-icon
+                  v-if="getData(date, method.methodId).dataType == 'bool'"
+                  :color="
+                    getData(date, method.methodId).judgement == 1
+                      ? 'green'
+                      : getData(date, method.methodId).judgement == 0
+                        ? 'red'
+                        : ''()
+                  "
+                >
+                  {{
+                    getData(date, method.methodId).judgement == 1
+                      ? 'mdi-circle-outline'
+                      : getData(date, method.methodId).judgement == 0
+                        ? 'mdi-close'
+                        : 'mdi-minus'
+                  }}
+                </v-icon>
+                <div v-else>
+                  {{ getData(date, method.methodId).value }}
+                </div>
+              </div>
               <div v-else>
-                {{ getData(date, method.methodId).value }}
+                <v-icon>
+                  {{ getData(date, method.methodId).unused ? 'mdi-minus' : '' }}
+                </v-icon>
               </div>
             </td>
           </tr>
@@ -98,7 +106,7 @@
               Confirm
             </v-btn>
             <v-btn
-              @click="reviewAbnormalities"
+              @click="abnormalitiesDialog = true"
               v-else
               variant="outlined"
               rounded="pill"
@@ -152,57 +160,56 @@
       scrollable
       persistent
       :overlay="false"
+      max-width="700"
       transition="dialog-transition"
     >
       <v-card>
-        <template #title>Abnormalities</template>
-        <template #append>
-          <v-btn icon @click="abnormalitiesDialog = false" flat size="sm">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </template>
-        <v-card-text>
-          <table class="w-100 inspectionHeader">
-            <thead>
-              <tr>
-                <th class="text-center">No</th>
-                <th>Tool Name</th>
-                <th>Registration Number</th>
-                <th class="text-center">User Department</th>
-                <th class="text-center">Finding Date</th>
-                <th style="min-width: 350px">Finding Description</th>
-                <th class="text-no-wrap text-center">Report Issued By</th>
-                <th class="text-center">Review</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(abnormality, index) in abnormalities" :key="index">
-                <td class="text-center">{{ index + 1 }}</td>
-                <td class="text-no-wrap">{{ abnormality.toolName }}</td>
-                <td class="text-no-wrap">{{ abnormality.regNumber }}</td>
-                <td class="text-center">{{ abnormality.userDepartment }}</td>
-                <td class="text-no-wrap text-center">
-                  {{ moment(abnormality.findingDate).format('DD/MM/YYYY') }}
-                </td>
-                <td>{{ abnormality.findingDescription }}</td>
-                <td class="text-center">{{ abnormality.reporterName }}</td>
-                <td class="text-center">
-                  <v-btn @click="reviewAbnormality(abnormality)">Review</v-btn>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <v-card-text class="text-center">
+          <h1 class="text-h5">Abnormalities Detected</h1>
+          <p class="my-2">
+            There are abnormalities detected in the inspection data. <br />
+            Please review the abnormalities before confirming the inspection.
+          </p>
+          <div class="my-2">
+            <v-divider></v-divider>
+          </div>
+          <v-row>
+            <v-col cols="4">
+              <v-btn
+                variant="outlined"
+                rounded="pill"
+                block
+                @click="abnormalitiesDialog = false"
+                >Cancel</v-btn
+              >
+            </v-col>
+            <v-col cols="4">
+              <v-btn
+                color="primary"
+                variant="outlined"
+                rounded="pill"
+                block
+                @click="$router.push('/inspections/abnormalities')"
+                >Review</v-btn
+              >
+            </v-col>
+            <v-col cols="4">
+              <v-btn
+                variant="outlined"
+                rounded="pill"
+                block
+                @click="
+                  verify = true;
+                  abnormalitiesDialog = false;
+                "
+                color="pink"
+              >
+                Confirm Anyway
+              </v-btn>
+            </v-col>
+          </v-row>
         </v-card-text>
       </v-card>
-    </v-dialog>
-    <v-dialog
-      v-model="abnormalitiesDetailDialog"
-      scrollable
-      persistent
-      :overlay="false"
-      max-width="500px"
-      transition="dialog-transition"
-    >
     </v-dialog>
   </div>
 </template>
@@ -273,7 +280,7 @@ const getData = (date, methodId) => {
           judgement: method.judgement,
           dataType: method.logic == 1 || method.logic == 16 ? 'bool' : 'text',
         }
-      : '';
+      : item;
   }
   return '';
 };

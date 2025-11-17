@@ -101,6 +101,12 @@
           >
             <div style="text-align: center; min-width: 100%">
               <pdf
+                @maximalize="
+                  async () => {
+                    scale = 1;
+                    await nextTick();
+                  }
+                "
                 :scale="scale"
                 :documentNumber="documentNumber"
                 :paperSize="paperSize"
@@ -123,7 +129,7 @@ const month = ref(moment().format('YYYY-MM'));
 const tools = ref([]);
 const search = ref(null);
 const dialog = ref(false);
-const scale = ref(0.5);
+const scale = ref(0.65);
 const documentNumber = ref('Format-I7603-001');
 const paperSize = ref('A3');
 

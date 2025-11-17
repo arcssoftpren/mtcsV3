@@ -222,6 +222,7 @@ module.exports = {
         .orderBy("tools.type", "ASC")
         .get();
       const inspectionDb = new Crud("inspections");
+
       let inspections = await Promise.all(
         tools.map(async (tool) => {
           const newinsDb = new Crud("inspections");
@@ -229,11 +230,15 @@ module.exports = {
             .where("toolId", tool.toolId)
             .where("inspectionDate", date)
             .get();
-          console.log(ins);
+
+          const notused = await new Crud("notused")
+            .where("toolId", tool.toolId)
+            .where("date", date)
+            .get();
 
           const toolDataDb = new Crud("toolData");
           const toolData = await toolDataDb.where("toolId", tool.toolId).get();
-          if (ins.length < 1) {
+          if (ins.length < 1 && notused.length < 1) {
             return {
               toolId: tool.toolId,
               toolName: tool.toolName,
@@ -324,6 +329,20 @@ module.exports = {
       });
     }
   },
+  notused: async (req, res) => {
+    try {
+      const { toolId, date, inspector } = req.body;
+      const db = await new Crud("notused").insert(req.body);
+      return res.status(200).json({
+        title: "Report Submited",
+        message: "The tool are successfully reported as unused.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  },
   getWeeklyInspections: async (req, res) => {
     try {
       const { startDate, endDate } = req.body;
@@ -342,6 +361,26 @@ module.exports = {
             .where("inspectionDate >=", startDate)
             .where("inspectionDate <=", endDate)
             .get();
+
+          let unused = await new Crud("notused")
+            .where("toolId", tool.toolId)
+            .where("date>=", startDate)
+            .where("date<=", endDate)
+            .get();
+
+          await Promise.all(
+            unused.map((u) => {
+              const insfind = ins.find((e) => e.inspectionDate == u.date);
+              if (!insfind) {
+                ins.push({
+                  toolId: u.toolId,
+                  inspectionDate: u.date,
+                  inspector: u.inspector,
+                  unused: true,
+                });
+              }
+            })
+          );
 
           const weeklyDb = new Crud("weeklyConfirmation");
           const confirmation = await weeklyDb
@@ -382,7 +421,12 @@ module.exports = {
             })
           );
 
-          return { ...tool, inspections: ins };
+          return {
+            ...tool,
+            inspections: ins.length > 0 ? ins : unused.length > 0 ? unused : [],
+            notused: unused.length > 0,
+            notusedData: unused,
+          };
         })
       );
 
@@ -519,6 +563,12 @@ module.exports = {
             })
           );
 
+          tool.unused = await new Crud("notused")
+            .where("toolId", tool.toolId)
+            .where("date>=", startOfMonth.format("YYYY-MM-DD"))
+            .where("date<=", endOfMonth.format("YYYY-MM-DD"))
+            .get();
+
           const toolDataDb = new Crud("toolData");
           const toolDataResult = await toolDataDb
             .where("toolId", tool.toolId)
@@ -550,6 +600,7 @@ module.exports = {
         ),
       });
     } catch (error) {
+      console.log(error);
       return res.status(500).json({
         title: "Server Error",
         text: error.message || "An error occurred while retrieving logics.",
@@ -745,6 +796,11 @@ module.exports = {
         .get();
       let data = await Promise.all(
         tools.map(async (tool) => {
+          tool.unused = await new Crud("notused")
+            .where("toolId", tool.toolId)
+            .where("date>=", startOfMonth.format("YYYY-MM-DD"))
+            .where("date<=", endOfMonth.format("YYYY-MM-DD"))
+            .get();
           tool.inspections = await Promise.all(
             weeks_.map(async (week) => {
               const weeklyDb = new Crud("weeklyConfirmation");

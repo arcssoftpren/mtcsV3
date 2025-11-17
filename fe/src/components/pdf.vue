@@ -1,6 +1,9 @@
 <template>
-  {{ inspectionsData }}
-  <div :class="props.paperSize" :style="`--scale: ${props.scale}`">
+  <div
+    ref="printArea"
+    :class="props.paperSize"
+    :style="`--scale: ${props.scale}`"
+  >
     <p class="docnumber text-start">({{ props.documentNumber }})</p>
     <table class="mt-2">
       <thead>
@@ -28,10 +31,21 @@
                   <td class="bordered">Approved By</td>
                 </tr>
                 <tr>
-                  <td class="bordered" :height="55 * props.scale"></td>
+                  <td class="bordered" :height="55 * props.scale">
+                    <img
+                      :style="{ height: `${40 * props.scale}px` }"
+                      :src="
+                        signArr.find(
+                          (s) => s.id == inspectionsData.monthlyConf.confirmator
+                        )?.image
+                      "
+                    />
+                  </td>
                 </tr>
                 <tr>
-                  <td class="bordered"></td>
+                  <td class="bordered">
+                    {{ inspectionsData.monthlyConf.confirmatorName }}
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -110,6 +124,10 @@
                   {{ getData(date, method)?.value }} {{ method.unit }}
                 </p>
               </div>
+
+              <div v-if="getData(date, method).unused">
+                {{ getData(date, method.methodId).unused ? '-' : '' }}
+              </div>
             </td>
           </tr>
 
@@ -119,9 +137,13 @@
           >
             <td colspan="3" class="small">Operator</td>
             <td v-for="(date, d) in dates" :key="d" class="small">
-              <div class="text-center">
-                {{ findOperator(date) }}
+              <div class="text-center" v-if="findOperator(date)">
+                <img
+                  :src="signArr.find((s) => s.id == findOperator(date))?.image"
+                  :height="20 * props.scale"
+                />
               </div>
+              <div v-else>-</div>
             </td>
           </tr>
         </template>
@@ -133,7 +155,12 @@
             :key="index"
             :colspan="weekData.diff"
           >
-            {{ weekData.inspections }}
+            <div class="d-flex align-center justify-center">
+              <img
+                :src="signArr.find((s) => s.id == weekData.confId)?.image"
+                :height="20 * props.scale"
+              />
+            </div>
           </td>
         </tr>
       </tbody>
@@ -291,11 +318,16 @@
       </tbody>
     </table>
   </div>
-  {{ signArr }}
+  <div class="position-fixed" style="top: 105px; right: 30px; z-index: 1000">
+    <v-btn size="small" flat icon color="primary" @click="print">
+      <v-icon>mdi-download</v-icon>
+    </v-btn>
+  </div>
 </template>
 <script setup>
 import { useAppStore } from '@/stores/app';
 import moment from 'moment';
+import html2pdf from 'html2pdf.js';
 
 const props = defineProps([
   'scale',
@@ -305,11 +337,15 @@ const props = defineProps([
   'inspectionsData',
 ]);
 
+const emits = defineEmits(['maximalize']);
+
 const signArr = ref([]);
 
 const store = useAppStore();
 
 const imageUrl = ref('');
+
+const imgArr = ref([]);
 
 const dates = ref([]);
 const weekDatas = ref([]);
@@ -334,7 +370,7 @@ const findOperator = (date) => {
       moment(d.inspectionDate).format('YYYY-MM') == props.month
   );
 
-  return dailyData ? dailyData.inspectorName : '-';
+  return dailyData ? dailyData.inspector : null;
 };
 
 const generateWeeklyData = async () => {
@@ -386,10 +422,6 @@ const generateWeeklyData = async () => {
     current.add(1, 'week');
   }
   weekDatas.value = weeks_;
-  signArr.value = weekDatas.value.map((w) => {
-    return w.confId;
-  });
-  signArr.value = signArr.value.filter((v) => v);
   try {
     const response = await getImage(props.inspectionsData.toolId);
   } catch (error) {
@@ -440,13 +472,92 @@ const getData = (date, method) => {
             : 'mdi-minus'
         : finalData?.value,
   };
+  let unused = false;
 
-  return finalData ? result : null;
+  if (!finalData) {
+    unused = props.inspectionsData.unused.find(
+      (f) => moment(f.date).format('DD') == date
+    );
+    if (unused) {
+      console.log(unused);
+    }
+  }
+
+  return finalData ? result : unused ? { unused: true } : '';
 };
 
-onMounted(() => {
-  generateWeeklyData();
+onMounted(async () => {
+  await generateWeeklyData();
+  await Promise.all(
+    weekDatas.value.map(async (week) => {
+      await getSignData(week.confId);
+    })
+  );
+
+  const insData = props.inspectionsData.inspections;
+  const filter = insData.filter((ins) => {
+    return ins != null;
+  });
+  await Promise.all(
+    insData.map(async (day) => {
+      if (!day) {
+        return;
+      } else {
+        getSignData(day.confirmator);
+      }
+    })
+  );
 });
+
+const getSignData = async (id) => {
+  try {
+    if (!signArr.value.some((sign) => sign.id === id) && id) {
+      console.log('fetching sign for id:', id);
+      const { data } = await store.fetchData(
+        null,
+        `/users/${id}/signature`,
+        'GET'
+      );
+      signArr.value.push({
+        id: id,
+        image: data ? `data:image/png;base64,${data}` : null,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const printArea = ref(null);
+
+const print = async () => {
+  await emits('maximalize');
+
+  const el = printArea.value;
+  const fileName =
+    props.inspectionsData.regNumber.replace(/\s+/g, '_') +
+    '_' +
+    moment(props.month).format('YYYY_MM');
+  const opt = {
+    margin: [2, 2, 2, 2], // margin PDF (dalam inci, bisa array [atas, kiri, bawah, kanan])
+    filename: fileName,
+    pagebreak: { mode: ['avoid'] },
+    image: { type: 'jpeg', quality: 0.5 },
+    html2canvas: { scale: 8, useCORS: true, windowHeight: el.scrollHeight },
+    jsPDF: { unit: 'mm', format: 'a3', orientation: 'landscape' },
+  };
+  html2pdf()
+    .set(opt)
+    .from(el)
+    .toPdf()
+    .get('pdf')
+    .then(function (pdf) {
+      if (pdf.internal.getNumberOfPages() > 1) {
+        pdf.deletePage(pdf.internal.getNumberOfPages());
+      }
+    })
+    .save();
+};
 </script>
 <style scoped>
 /* a4 paper */
