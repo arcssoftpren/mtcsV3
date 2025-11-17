@@ -1,26 +1,34 @@
 <template>
   <v-card class="w-100">
     <template #text>
-      <div>
-        <v-text-field
-          :error-messages="validate[index].$errors.map((e) => e.$message)"
-          class="mb-1"
-          v-for="(item, index) in structure"
-          :key="index"
-          variant="outlined"
-          rounded="pill"
-          density="compact"
-          :hint="item.hint"
-          :type="item.type"
-          :label="item.label"
-          v-model="formData[index]"
-          :append-inner-icon="item.innerIcon"
-        />
-        <v-switch hide-details label="Show Password" v-model="showPassword" />
-        <v-divider></v-divider>
-        <v-btn variant="outlined" rounded="pill" block @click="submit"
-          >Login</v-btn
-        >
+      <div
+        class="d-flex text-center align-center justify-center w-100 h-100 flex-column"
+      >
+        <v-img src="@/assets/images/softpren.png" width="150" class="mb-5" />
+        <h1 class="text-h5 my-2">WELCOME TO</h1>
+        <h1 class="text-h4 my-2">SOFTPREN MTCS</h1>
+        <h1 class="text-body-1 my-2">MEASUREMENT TOOLS CONTROL SYSTEM</h1>
+        <div class="w-100">
+          <v-text-field
+            :error-messages="validate[index].$errors.map((e) => e.$message)"
+            class="mb-1"
+            v-for="(item, index) in structure"
+            :key="index"
+            variant="outlined"
+            rounded="pill"
+            density="compact"
+            :hint="item.hint"
+            :type="item.type"
+            :label="item.label"
+            v-model="formData[index]"
+            :append-inner-icon="item.innerIcon"
+          />
+          <v-switch hide-details label="Show Password" v-model="showPassword" />
+          <v-divider></v-divider>
+          <v-btn variant="outlined" rounded="pill" block @click="submit"
+            >Login</v-btn
+          >
+        </div>
       </div>
     </template>
   </v-card>

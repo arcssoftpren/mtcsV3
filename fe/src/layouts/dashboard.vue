@@ -74,9 +74,9 @@
           :key="index"
           :to="item.path"
         >
-          <template #prepend>
+          <!-- <template #prepend>
             <v-icon>{{ item.icon }}</v-icon>
-          </template>
+          </template> -->
           <template #title>
             {{ item.title }}
           </template>
