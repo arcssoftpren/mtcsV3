@@ -4,7 +4,7 @@
       <table class="inspectionHeader">
         <thead>
           <tr>
-            <th colspan="4" class="text-center">PRODUCTION</th>
+            <th colspan="4" class="text-center bg-primary">PRODUCTION</th>
           </tr>
           <tr>
             <th>Abnormality Type</th>
@@ -83,13 +83,96 @@
           </tr>
 
           <tr>
-            <th class="text-no-wrap">Reported By</th>
+            <th class="text-no-wrap">PIC</th>
             <td>{{ abnormalityData.reporterName }}</td>
-            <th class="text-no-wrap">Confirmed By</th>
+            <th class="text-no-wrap">GL/SPV/MGR</th>
             <td
               :class="{ 'bg-pink-lighten-4': !abnormalityData.confirmatorName }"
             >
               {{ abnormalityData.confirmatorName }}
+            </td>
+          </tr>
+          <tr>
+            <th colspan="4" class="text-center bg-primary">QUALITY CONTROL</th>
+          </tr>
+          <tr>
+            <th>Action to Products</th>
+            <td colspan="3">
+              <v-textarea
+                hide-details
+                rows="3"
+                variant="outlined"
+                rounded="lg"
+                density="compact"
+                no-resize
+              />
+            </td>
+          </tr>
+          <tr>
+            <th rowspan="2">Action to Measurement Tools</th>
+            <td colspan="3">
+              <div class="d-flex">
+                <v-checkbox-btn label="Disposal" inline=""></v-checkbox-btn>
+                <v-checkbox-btn label="Repaired" inline=""></v-checkbox-btn>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <v-textarea
+                hide-details
+                rows="3"
+                variant="outlined"
+                rounded="lg"
+                density="compact"
+                no-resize
+              />
+            </td>
+          </tr>
+          <tr>
+            <th class="text-no-wrap">PIC</th>
+            <td>{{ abnormalityData.reporterName }}</td>
+            <th class="text-no-wrap">GL/SPV/MGR</th>
+            <td
+              :class="{ 'bg-pink-lighten-4': !abnormalityData.confirmatorName }"
+            >
+              {{ abnormalityData.confirmatorName }}
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="4" class="text-center bg-primary">PRODUCTION</th>
+          </tr>
+          <tr>
+            <th>Confirmation</th>
+            <td colspan="3">
+              <v-textarea
+                label="note"
+                hide-details
+                rows="3"
+                variant="outlined"
+                rounded="lg"
+                density="compact"
+                no-resize
+              />
+            </td>
+          </tr>
+
+          <tr>
+            <th colspan="4" class="text-center bg-primary">QUALITY CONTROL</th>
+          </tr>
+          <tr>
+            <th>Confirmation</th>
+            <td colspan="3">
+              <v-textarea
+                label="note"
+                hide-details
+                rows="3"
+                variant="outlined"
+                rounded="lg"
+                density="compact"
+                no-resize
+              />
             </td>
           </tr>
         </thead>
@@ -117,6 +200,8 @@ const formdata = reactive({
   tempActions: props.abnormalityData.actions || '',
   confirmator: store.userData.userId,
 });
+
+const formData2 = reactive({});
 
 const rules = {
   cause: {
