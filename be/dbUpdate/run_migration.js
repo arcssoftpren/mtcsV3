@@ -8,8 +8,8 @@ const path = require("path");
 async function runMigration() {
   const connection = await mysql.createConnection({
     host: "localhost",
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
+    user: process.env.SQL_USER,
+    password: process.env.SQL_PASSWORD,
     database: process.env.DB_NAME,
     multipleStatements: true,
   });
