@@ -896,4 +896,218 @@ module.exports = {
       });
     }
   },
+  getAbnPhase: async (req, res) => {
+    try {
+      const { abId } = req.params;
+      const db1 = new Crud("abnormalreport_prod");
+      const db2 = new Crud("abnormalreport_phase2");
+      const db3 = new Crud("abnormalreport_phase3");
+      const db4 = new Crud("abnormalreport_phase4");
+
+      // Get phase 1 data (cause, tempActions, reporter)
+      db1.select(
+        "abnormalreport_prod.cause, abnormalreport_prod.tempActions, abnormalreport_prod.reporter, users.userName as reporterName"
+      );
+      db1.join("users", "users.userId = abnormalreport_prod.reporter", "left");
+      const data1 = await db1.where("abnormalreport_prod.id", abId).get();
+
+      db2.select(
+        "abnormalreport_phase2.*, qcPICUser.userName as qcPICName, qcMgrUser.userName as qcMgrName"
+      );
+      db2.join(
+        "users as qcPICUser",
+        "qcPICUser.userId = abnormalreport_phase2.qcPIC",
+        "left"
+      );
+      db2.join(
+        "users as qcMgrUser",
+        "qcMgrUser.userId = abnormalreport_phase2.qcMgr",
+        "left"
+      );
+      const data2 = await db2.where("abId", abId).get();
+
+      db3.select(
+        "abnormalreport_phase3.*, users.userName as prodConfirmatorName"
+      );
+      db3.join(
+        "users",
+        "users.userId = abnormalreport_phase3.prodConfirmator",
+        "left"
+      );
+      const data3 = await db3.where("abId", abId).get();
+
+      db4.select(
+        "abnormalreport_phase4.id, abnormalreport_phase4.abId, abnormalreport_phase4.qcConfirmNote, " +
+          "abnormalreport_phase4.qcMgr as qcMgr4, abnormalreport_phase4.qcMgrDate as qcMgr4Date, " +
+          "abnormalreport_phase4.qcConfirmator, abnormalreport_phase4.qcConfirmDate, " +
+          "qcMgrUser4.userName as qcMgr4Name, qcConfUser.userName as qcConfirmatorName"
+      );
+      db4.join(
+        "users as qcMgrUser4",
+        "qcMgrUser4.userId = abnormalreport_phase4.qcMgr",
+        "left"
+      );
+      db4.join(
+        "users as qcConfUser",
+        "qcConfUser.userId = abnormalreport_phase4.qcConfirmator",
+        "left"
+      );
+      const data4 = await db4.where("abId", abId).get();
+
+      const result = {
+        ...(data1.length > 0 ? data1[0] : {}),
+        ...(data2.length > 0 ? data2[0] : {}),
+        ...(data3.length > 0 ? data3[0] : {}),
+        ...(data4.length > 0 ? data4[0] : {}),
+      };
+
+      return res.status(200).json({
+        title: "Data Retrieved",
+        text: "Data retrieved successfully.",
+        data: Object.keys(result).length > 0 ? result : null,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        title: "Server Error",
+        text: error.message || "An error occurred while retrieving logics.",
+        icon: "error",
+      });
+    }
+  },
+  abConfirm2: async (req, res) => {
+    try {
+      const { abId, actToProducts, actToTools, qcActionNote, qcPIC, qcMgr } =
+        req.body;
+      const db = new Crud("abnormalreport_phase2");
+
+      // Check if record exists
+      const existing = await db.where("abId", abId).get();
+
+      if (existing.length > 0) {
+        // Update existing record
+        const updateData = {};
+        if (qcPIC) {
+          updateData.qcPIC = qcPIC;
+          updateData.qcActionDate = moment().format("YYYY-MM-DD");
+        }
+        if (qcMgr) {
+          updateData.qcMgr = qcMgr;
+          updateData.qcMgrDate = moment().format("YYYY-MM-DD");
+        }
+        await db.where("abId", abId).update(updateData);
+      } else {
+        // Insert new record
+        await db.insert({
+          abId,
+          actToProducts,
+          actToTools: Array.isArray(actToTools)
+            ? actToTools.join(",")
+            : actToTools,
+          qcActionNote,
+          qcPIC: qcPIC || null,
+          qcActionDate: qcPIC ? moment().format("YYYY-MM-DD") : null,
+          qcMgr: qcMgr || null,
+          qcMgrDate: qcMgr ? moment().format("YYYY-MM-DD") : null,
+        });
+      }
+
+      return res.status(200).json({
+        title: "Confirmation Successful",
+        text: "QC action has been submitted successfully.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        title: "Server Error",
+        text: error.message || "An error occurred while confirming the report.",
+        icon: "error",
+      });
+    }
+  },
+  abConfirm3: async (req, res) => {
+    try {
+      const { abId, prodConfirmNote, prodConfirmator } = req.body;
+      const db = new Crud("abnormalreport_phase3");
+      await db.insert({
+        abId,
+        prodConfirmNote,
+        prodConfirmator,
+        prodConfirmDate: moment().format("YYYY-MM-DD"),
+      });
+      return res.status(200).json({
+        title: "Confirmation Successful",
+        text: "Production confirmation has been submitted successfully.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        title: "Server Error",
+        text: error.message || "An error occurred while confirming the report.",
+        icon: "error",
+      });
+    }
+  },
+  abConfirm4: async (req, res) => {
+    try {
+      const { abId, qcConfirmNote, qcMgr, qcConfirmator } = req.body;
+      const db = new Crud("abnormalreport_phase4");
+
+      // Check if record exists
+      const existing = await db.where("abId", abId).get();
+
+      if (existing.length > 0) {
+        // Update existing record
+        const updateData = {};
+        if (qcMgr) {
+          updateData.qcMgr = qcMgr;
+          updateData.qcMgrDate = moment().format("YYYY-MM-DD");
+        }
+        if (qcConfirmator) {
+          updateData.qcConfirmator = qcConfirmator;
+          updateData.qcConfirmDate = moment().format("YYYY-MM-DD");
+        }
+        await db.where("abId", abId).update(updateData);
+
+        // Check if both signatures are complete
+        const updated = await db.where("abId", abId).get();
+        if (updated[0].qcMgr && updated[0].qcConfirmator) {
+          // Update status to closed (1) in abnormalreport_prod
+          const abnormalDb = new Crud("abnormalreport_prod");
+          await abnormalDb.where("id", abId).update({ status: 1 });
+        }
+      } else {
+        // Insert new record
+        await db.insert({
+          abId,
+          qcConfirmNote,
+          qcMgr: qcMgr || null,
+          qcMgrDate: qcMgr ? moment().format("YYYY-MM-DD") : null,
+          qcConfirmator: qcConfirmator || null,
+          qcConfirmDate: qcConfirmator ? moment().format("YYYY-MM-DD") : null,
+        });
+
+        // Check if both signatures are complete on insert
+        if (qcMgr && qcConfirmator) {
+          const abnormalDb = new Crud("abnormalreport_prod");
+          await abnormalDb.where("id", abId).update({ status: 1 });
+        }
+      }
+
+      return res.status(200).json({
+        title: "Confirmation Successful",
+        text: "QC confirmation has been submitted successfully.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        title: "Server Error",
+        text: error.message || "An error occurred while confirming the report.",
+        icon: "error",
+      });
+    }
+  },
 };

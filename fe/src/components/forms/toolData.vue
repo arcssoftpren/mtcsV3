@@ -6,6 +6,7 @@
           <td>{{ item.label }}</td>
           <td>
             <v-text-field
+              v-if="item.header_key != 'calibrationInterval'"
               :type="item.objectType"
               hide-details
               hide-spin-buttons
@@ -14,6 +15,17 @@
               density="compact"
               v-model="item.value"
             />
+            <v-select
+              v-else
+              hide-details
+              hide-spin-buttons
+              variant="outlined"
+              rounded="pill"
+              density="compact"
+              v-model="item.value"
+              :items="['External 1/Year', 'External 3/Year']"
+            >
+            </v-select>
           </td>
         </tr>
       </tbody>

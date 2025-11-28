@@ -155,4 +155,28 @@ router.post(
   validateJWT,
   inspectionControllers.getFinished
 );
+
+router.post(
+  "/inspections/abnormalities/phase2",
+  validateJWT,
+  inspectionControllers.abConfirm2
+);
+
+router.post(
+  "/inspections/abnormalities/phase3",
+  validateJWT,
+  inspectionControllers.abConfirm3
+);
+
+router.post(
+  "/inspections/abnormalities/phase4",
+  validateJWT,
+  inspectionControllers.abConfirm4
+);
+
+router.get(
+  "/inspections/abnormalities/getPhase/:abId",
+  validateJWT,
+  inspectionControllers.getAbnPhase
+);
 module.exports = router;

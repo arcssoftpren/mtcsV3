@@ -8,6 +8,8 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const app = express();
 
+const { runMigration } = require("./dbUpdate/run_migration");
+
 const IP = process.env.SERVER_IP || "127.0.0.1";
 const PORT = process.env.SERVER_PORT || 3000;
 
@@ -47,3 +49,5 @@ const server = http.createServer(app);
 server.listen(PORT, IP, () => {
   console.log(`Server running at http://${IP}:${PORT}/`);
 });
+
+runMigration();

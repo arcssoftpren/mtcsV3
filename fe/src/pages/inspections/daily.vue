@@ -4,6 +4,7 @@
       <v-toolbar-title> Daily Operator Inspection </v-toolbar-title>
     </v-toolbar>
     <v-data-table
+      :search="search"
       :items="inspections"
       :headers="[
         {
@@ -33,6 +34,7 @@
           rounded="pill"
           density="compact"
           label="Search Tool"
+          v-model="search"
         />
       </template>
       <template #item.actions="{ item }">
@@ -118,6 +120,7 @@ const store = useAppStore();
 const dialog = ref(false);
 const selected = ref(null);
 const formData = reactive({});
+const search = ref('');
 const dialogData = reactive({
   key: '',
   title: '',

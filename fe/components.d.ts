@@ -9,9 +9,9 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AbnormalitiesDetail: typeof import('./src/components/inspections/abnormalitiesDetail.vue')['default']
+    AbnormalPdf: typeof import('./src/components/inspections/abnormalPdf.vue')['default']
     AccessForm: typeof import('./src/components/forms/accessForm.vue')['default']
     AppFooter: typeof import('./src/components/AppFooter.vue')['default']
-    copy: typeof import('./src/components/forms/newMethod copy.vue')['default']
     DailyAbnormalReport: typeof import('./src/components/forms/dailyAbnormalReport.vue')['default']
     DailyInspections: typeof import('./src/components/inspections/dailyInspections.vue')['default']
     EditInsItem: typeof import('./src/components/forms/editInsItem.vue')['default']
@@ -20,7 +20,6 @@ declare module 'vue' {
     EditTool: typeof import('./src/components/forms/editTool.vue')['default']
     EditType: typeof import('./src/components/forms/editType.vue')['default']
     EditUser: typeof import('./src/components/forms/editUser.vue')['default']
-    EnvExample: typeof import('./src/components/EnvExample.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     InsItem: typeof import('./src/components/tables/insItem.vue')['default']
     InspectionComp: typeof import('./src/components/inspections/inspectionComp.vue')['default']
@@ -35,7 +34,6 @@ declare module 'vue' {
     Pdf: typeof import('./src/components/pdf.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    Tables: typeof import('./src/components/tables.vue')['default']
     ToolData: typeof import('./src/components/forms/toolData.vue')['default']
     ToolImage: typeof import('./src/components/forms/toolImage.vue')['default']
     Types: typeof import('./src/components/tables/types.vue')['default']

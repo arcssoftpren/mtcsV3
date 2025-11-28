@@ -542,8 +542,8 @@ const print = async () => {
     margin: [2, 2, 2, 2], // margin PDF (dalam inci, bisa array [atas, kiri, bawah, kanan])
     filename: fileName,
     pagebreak: { mode: ['avoid'] },
-    image: { type: 'jpeg', quality: 0.5 },
-    html2canvas: { scale: 8, useCORS: true, windowHeight: el.scrollHeight },
+    image: { type: 'jpeg', quality: 1 },
+    html2canvas: { scale: 5, useCORS: true, windowHeight: el.scrollHeight },
     jsPDF: { unit: 'mm', format: 'a3', orientation: 'landscape' },
   };
   html2pdf()

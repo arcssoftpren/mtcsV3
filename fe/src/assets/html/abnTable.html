@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Laporan Abnormality Alat Ukur</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 15mm;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        margin: 0;
+        padding: 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid black;
+        page-break-inside: avoid;
+      }
+      td,
+      th {
+        border: 1px solid black;
+        padding: 4px 6px;
+        vertical-align: top;
+      }
+      .no-border {
+        border: none !important;
+      }
+      .header-title {
+        font-size: 18px;
+        font-weight: normal;
+        text-align: left;
+        padding-left: 5px;
+        border-left: none !important;
+      }
+      .checkbox-cell {
+        width: 20px;
+      }
+      .section-label {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        text-align: center;
+        font-weight: normal;
+        font-size: 12px;
+        padding: 0 2px;
+        width: 25px;
+        white-space: nowrap;
+      }
+      .small-input {
+        width: 80px;
+      }
+      .note-red {
+        color: red;
+        font-style: italic;
+        font-size: 10.5px;
+        padding-left: 5px;
+      }
+      .no-padding {
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <td colspan="3" style="width: 65%; border-left: none">
+          (Form-7151-001)
+        </td>
+        <td colspan="2" style="width: 35%; text-align: center; font-size: 12px">
+          Dep. Penemu
+          <table style="width: 100%; border: none; margin-top: 4px">
+            <tr>
+              <td style="border: 1px solid black; text-align: center">
+                GL/SV/Mgr
+              </td>
+              <td style="border: 1px solid black; text-align: center">PIC</td>
+            </tr>
+            <tr>
+              <td style="border: 1px solid black; height: 30px"></td>
+              <td style="border: 1px solid black"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="header-title">Laporan Abnormality Alat Ukur</td>
+      </tr>
+      <tr>
+        <td class="section-label" style="border-right: none; height: 40px">
+          Deteksi<br />Abnormal<br />Process
+        </td>
+        <td class="checkbox-cell">
+          <input type="checkbox" id="kalibrasi" name="kalibrasi" /><label
+            for="kalibrasi"
+          >
+            Kalibrasi</label
+          >
+        </td>
+        <td style="border-right: none"></td>
+        <td colspan="2" style="padding-left: 6px">Detail Temuan Abnormality</td>
+      </tr>
+      <tr>
+        <td class="section-label" style="border-right: none; height: 20px">
+          &nbsp;
+        </td>
+        <td class="checkbox-cell">
+          <input type="checkbox" id="pengecekan" name="pengecekan" /><label
+            for="pengecekan"
+          >
+            Pengecekan Harian</label
+          >
+        </td>
+        <td style="border-right: none"></td>
+        <td colspan="2" style="border-left: none; height: 20px"></td>
+      </tr>
+      <tr>
+        <td colspan="5" style="height: 10px"></td>
+      </tr>
+      <tr>
+        <td class="section-label" style="border-right: none; height: 80px">
+          Kejadian<br />Abnormality
+        </td>
+        <td style="width: 20%">Tanggal Ditemu l :</td>
+        <td style="width: 30%; border-right: none"></td>
+        <td style="width: 20%">Tempat digunakan :</td>
+        <td style="border-left: none"></td>
+      </tr>
+      <tr>
+        <td style="border-right: none"></td>
+        <td>Nama alat ukur :</td>
+        <td style="border-right: none"></td>
+        <td>Dep Pengguna</td>
+        <td style="border-left: none"></td>
+      </tr>
+      <tr>
+        <td style="border-right: none"></td>
+        <td>No. kontrol :</td>
+        <td style="border-right: none"></td>
+        <td>Tanggal kalibrasi terak :</td>
+        <td style="border-left: none"></td>
+      </tr>
+      <tr>
+        <td colspan="5" style="height: 10px"></td>
+      </tr>
+      <tr style="height: 80px">
+        <td class="section-label" style="border-right: none">Penyebab</td>
+        <td colspan="4"></td>
+      </tr>
+      <tr>
+        <td colspan="5" style="height: 10px"></td>
+      </tr>
+      <tr style="height: 80px">
+        <td class="section-label" style="border-right: none">Perbaikan</td>
+        <td colspan="4"></td>
+      </tr>
+      <tr>
+        <td colspan="5" style="height: 10px"></td>
+      </tr>
+      <tr>
+        <td colspan="5">
+          <table style="width: 100%; border: none; border-collapse: collapse">
+            <tr>
+              <td style="border: 1px solid black; width: 25%">
+                Perlakuan Produk :
+              </td>
+              <td
+                style="
+                  border: none;
+                  font-size: 11px;
+                  font-style: italic;
+                  color: red;
+                "
+              >
+                (Contoh : Random sampling check terhadap produk yang sudah
+                terbuas)
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr style="height: 80px">
+        <td
+          class="section-label"
+          style="border-right: none; vertical-align: top"
+        >
+          Perlakuan
+        </td>
+        <td colspan="2" style="border-right: none; vertical-align: top">
+          Perlakuan Alat ukur :
+          <label><input type="checkbox" name="repair" /> Repair</label>
+          <label><input type="checkbox" name="disposal" /> Disposal</label>
+        </td>
+        <td style="width: 15%; vertical-align: top">Dep. QC</td>
+        <td style="vertical-align: top; padding: 0">
+          <table
+            style="
+              width: 100%;
+              border: none;
+              border-collapse: collapse;
+              height: 100%;
+            "
+          >
+            <tr>
+              <td
+                style="
+                  border: 1px solid black;
+                  text-align: center;
+                  font-size: 11px;
+                "
+              >
+                GL/SV/Mgr
+              </td>
+              <td
+                style="
+                  border: 1px solid black;
+                  text-align: center;
+                  font-size: 11px;
+                "
+              >
+                PIC
+              </td>
+            </tr>
+            <tr style="height: 55px">
+              <td style="border: 1px solid black"></td>
+              <td style="border: 1px solid black"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" style="height: 5px"></td>
+      </tr>
+      <tr>
+        <td colspan="5" style="border-top: none">Note :</td>
+      </tr>
+      <tr>
+        <td colspan="5" style="height: 15px"></td>
+      </tr>
+      <tr>
+        <td colspan="5" style="height: 10px; border-top: none">
+          Konfirmasi tindakan diatas :
+        </td>
+      </tr>
+      <tr style="height: 70px">
+        <td colspan="4" style="border-right: none"></td>
+        <td style="padding: 0">
+          <table
+            style="
+              width: 100%;
+              border: none;
+              border-collapse: collapse;
+              height: 100%;
+            "
+          >
+            <tr>
+              <td
+                style="
+                  border: 1px solid black;
+                  font-size: 11px;
+                  text-align: center;
+                "
+              >
+                Dep. Pengguna
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid black;
+                  font-size: 11px;
+                  text-align: center;
+                "
+              >
+                GL/SV/Mgr
+              </td>
+            </tr>
+            <tr style="height: 40px">
+              <td style="border: 1px solid black"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" style="height: 15px"></td>
+      </tr>
+      <tr>
+        <td colspan="5" style="height: 20px">
+          Menyetujui dan mengkonfirmasi tindakan diatas :
+        </td>
+      </tr>
+      <tr style="height: 70px">
+        <td colspan="4" style="border-right: none"></td>
+        <td style="padding: 0">
+          <table
+            style="
+              width: 100%;
+              border: none;
+              border-collapse: collapse;
+              height: 100%;
+            "
+          >
+            <tr>
+              <td
+                style="
+                  border: 1px solid black;
+                  font-size: 11px;
+                  text-align: center;
+                "
+              >
+                Dep. QC
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid black;
+                  font-size: 11px;
+                  text-align: center;
+                "
+              >
+                GL/SV/Mgr
+              </td>
+            </tr>
+            <tr>
+              <td
+                style="
+                  border: 1px solid black;
+                  font-size: 11px;
+                  text-align: center;
+                "
+              >
+                Konfirmasi
+              </td>
+            </tr>
+            <tr style="height: 40px">
+              <td style="border: 1px solid black"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
