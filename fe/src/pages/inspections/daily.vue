@@ -19,6 +19,10 @@
           key: 'toolName',
         },
         {
+          title: 'Location',
+          key: 'location',
+        },
+        {
           title: 'Actions',
           key: 'actions',
           align: 'center',

@@ -46,3 +46,12 @@ CREATE TABLE IF NOT EXISTS `abnormalreport_phase4` (
     FOREIGN KEY (`qcMgr`) REFERENCES `users` (`userId`) ON DELETE RESTRICT,
     FOREIGN KEY (`qcConfirmator`) REFERENCES `users` (`userId`) ON DELETE RESTRICT
 ) ENGINE = InnoDB DEFAULT CHARSET = latin1;
+
+ALTER TABLE roles
+ADD COLUMN IF NOT EXISTS signPermissions_1 INT NOT NULL DEFAULT '0' AFTER homePage;
+
+ALTER TABLE roles
+ADD COLUMN IF NOT EXISTS signPermissions_2 INT NOT NULL DEFAULT '0' AFTER signPermissions_1;
+
+ALTER TABLE roles
+ADD COLUMN IF NOT EXISTS signPermissions_3 INT NOT NULL DEFAULT '0' AFTER signPermissions_2;

@@ -4,7 +4,7 @@
       <table class="inspectionHeader">
         <thead>
           <tr>
-            <th colspan="4" class="text-center bg-primary">PRODUCTION</th>
+            <th colspan="4" class="text-center bg-primary">USER DEPT</th>
           </tr>
           <tr>
             <th>Abnormality Type</th>
@@ -53,6 +53,7 @@
             <th>Cause</th>
             <td colspan="3">
               <v-textarea
+                :readonly="phase > 1"
                 :disabled="abnormalityData.type == 2"
                 :error-messages="v$.cause.$errors.map((e) => e.$message)"
                 hide-details
@@ -69,6 +70,7 @@
             <th>Taken Actions</th>
             <td colspan="3">
               <v-textarea
+                :readonly="phase > 1"
                 :disabled="abnormalityData.type == 2"
                 :error-messages="v$.tempActions.$errors.map((e) => e.$message)"
                 v-model="formdata.tempActions"
@@ -98,7 +100,11 @@
                 variant="outlined"
                 rounded="pill"
                 block
-                :disabled="phase != 1 || abnormalityData.confirmator != null"
+                :disabled="
+                  phase != 1 ||
+                  abnormalityData.confirmator != null ||
+                  signIds.signPermissions_3 != 1
+                "
                 >Response</v-btn
               >
             </td>
@@ -110,6 +116,7 @@
             <th>Action to Products</th>
             <td colspan="3">
               <v-textarea
+                :readonly="formData2.qcPICName != ''"
                 hide-details
                 rows="3"
                 variant="outlined"
@@ -151,6 +158,7 @@
           <tr>
             <td colspan="3">
               <v-textarea
+                :readonly="formData2.qcPICName != ''"
                 hide-details
                 rows="3"
                 variant="outlined"
@@ -187,7 +195,11 @@
                 variant="outlined"
                 rounded="pill"
                 block
-                :disabled="phase != 2 || formData2.qcPIC != null"
+                :disabled="
+                  phase != 2 ||
+                  formData2.qcPIC != null ||
+                  signIds.signPermissions_1 != 1
+                "
               >
                 Sign as PIC
               </v-btn>
@@ -201,7 +213,8 @@
                 :disabled="
                   phase != 2 ||
                   formData2.qcMgr != null ||
-                  formData2.qcPIC == null
+                  formData2.qcPIC == null ||
+                  signIds.signPermissions_2 != 1
                 "
               >
                 Sign as GL/SVP/MGR
@@ -209,12 +222,14 @@
             </td>
           </tr>
           <tr>
-            <th colspan="4" class="text-center bg-primary">PRODUCTION</th>
+            <th colspan="4" class="text-center bg-primary">USER DEPT</th>
           </tr>
           <tr>
             <th>Confirmation</th>
+
             <td colspan="3">
               <v-textarea
+                :readonly="formData3.prodConfirmatorName != ''"
                 label="note"
                 hide-details
                 rows="3"
@@ -245,7 +260,11 @@
                 variant="outlined"
                 rounded="pill"
                 block
-                :disabled="phase != 3 || formData3.prodConfirmator != null"
+                :disabled="
+                  phase != 3 ||
+                  formData3.prodConfirmator != null ||
+                  signIds.signPermissions_3 != 1
+                "
               >
                 Response
               </v-btn>
@@ -258,6 +277,7 @@
             <th>Confirmation</th>
             <td colspan="3">
               <v-textarea
+                :readonly="formData4.qcConfirmatorName != ''"
                 label="note"
                 hide-details
                 rows="3"
@@ -295,7 +315,11 @@
                 variant="outlined"
                 rounded="pill"
                 block
-                :disabled="phase != 4 || formData4.qcConfirmator != null"
+                :disabled="
+                  phase != 4 ||
+                  formData4.qcConfirmator != null ||
+                  signIds.signPermissions_1 != 1
+                "
               >
                 Sign as Confirmator
               </v-btn>
@@ -309,7 +333,8 @@
                 :disabled="
                   phase != 4 ||
                   formData4.qcConfirmator == null ||
-                  formData4.qcMgr4 != null
+                  formData4.qcMgr4 != null ||
+                  signIds.signPermissions_2 != 1
                 "
               >
                 Sign as GL/SVP/MGR
@@ -319,7 +344,6 @@
         </thead>
       </table>
     </v-col>
-    <v-col cols="12"> </v-col>
   </v-row>
 </template>
 <script setup>
@@ -333,6 +357,12 @@ const store = useAppStore();
 const dialog = ref(false);
 
 const phase = ref(1);
+
+const signIds = ref({
+  signPermissions_1: 0,
+  signPermissions_2: 0,
+  signPermissions_3: 0,
+});
 
 const formdata = reactive({
   id: props.abnormalityData.id || null,
@@ -591,7 +621,23 @@ const getPhase = async () => {
   }
 };
 
+const getSignPermissions = async () => {
+  try {
+    const response = await store.fetchData(
+      {},
+      `/roles/${store.userData.roleId}/signPermissions`
+    );
+    const data = response.data;
+    signIds.value.signPermissions_1 = data.signPermissions_1;
+    signIds.value.signPermissions_2 = data.signPermissions_2;
+    signIds.value.signPermissions_3 = data.signPermissions_3;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 onMounted(() => {
   getPhase();
+  getSignPermissions();
 });
 </script>

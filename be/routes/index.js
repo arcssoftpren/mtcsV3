@@ -179,4 +179,17 @@ router.get(
   validateJWT,
   inspectionControllers.getAbnPhase
 );
+
+router.put(
+  "/roles/:roleId/signPermissions",
+  validateJWT,
+  accessController.setSignPermission
+);
+
+router.get(
+  "/roles/:roleId/signPermissions",
+  validateJWT,
+  accessController.getSignPermission
+);
+
 module.exports = router;

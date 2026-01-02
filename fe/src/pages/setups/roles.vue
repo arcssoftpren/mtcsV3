@@ -29,6 +29,14 @@
             @click="openDialog('access', item)"
             >mdi-shield-key</v-icon
           >
+
+          <v-icon
+            class="ma-auto"
+            color="success"
+            @click="openDialog('sign', item)"
+          >
+            mdi-draw
+          </v-icon>
           <v-icon
             class="ma-auto"
             color="error"
@@ -99,6 +107,39 @@
               </v-col>
             </v-row>
           </div>
+
+          <div v-if="dialogData.key === 'sign'">
+            <v-table class="w-100">
+              <thead>
+                <tr>
+                  <th class="text-left">Signature Name</th>
+                  <th class="text-left">Permissions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="sign in signID" :key="sign.id">
+                  <td>{{ sign.name }}</td>
+                  <td>
+                    <v-checkbox-btn
+                      v-model="signIds[sign.id]"
+                      :value="sign.id"
+                      :label="sign.name"
+                      inline
+                      :true-value="1"
+                      :false-value="0"
+                      @change="updateSignaturePermissions"
+                    >
+                    </v-checkbox-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </v-table>
+            <v-divider class="my-2"></v-divider>
+
+            <v-btn variant="outlined" rounded="pill" block @click="refresh"
+              >Close</v-btn
+            >
+          </div>
         </template>
       </v-card>
     </v-dialog>
@@ -110,6 +151,11 @@ import { useAppStore } from '@/stores/app';
 const store = useAppStore();
 const dialog = ref(false);
 const selected = ref(null);
+const signIds = ref({
+  signPermissions_1: 0,
+  signPermissions_2: 0,
+  signPermissions_3: 0,
+});
 const roles = ref([]);
 const headers = [
   { title: 'No', key: 'no', width: '50px' },
@@ -123,6 +169,11 @@ const headers = [
     align: 'center',
   },
 ];
+const signID = ref([
+  { id: 'signPermissions_1', name: 'QUALITY PIC' },
+  { id: 'signPermissions_2', name: 'QUALITY GL/SPV/MGR' },
+  { id: 'signPermissions_3', name: 'USER DEPT GL/SVP/MGR' },
+]);
 const formData = reactive({});
 const dialogData = reactive({
   key: '',
@@ -148,6 +199,15 @@ const openDialog = (key, item) => {
       dialogData.title = 'Manage Access';
       dialogData.subtitle = 'Set access permissions for this role';
       selected.value = item;
+      break;
+    case 'sign':
+      dialogData.key = 'sign';
+      dialogData.title = 'Manage Signatures';
+      dialogData.subtitle = 'Set signature permissions for this role';
+      selected.value = item;
+      signIds.value.signPermissions_1 = selected.value.signPermissions_1;
+      signIds.value.signPermissions_2 = selected.value.signPermissions_2;
+      signIds.value.signPermissions_3 = selected.value.signPermissions_3;
       break;
     case 'delete':
       dialogData.key = 'delete';
@@ -185,10 +245,38 @@ const refresh = async () => {
     ...role,
     no: index + 1,
   }));
+
   console.log(roles.value);
 };
 
 onBeforeMount(() => {
   refresh();
 });
+
+const updateSignaturePermissions = async () => {
+  try {
+    const payload = {
+      roleId: selected.value.roleId,
+      signPermissions_1: signIds.value.signPermissions_1,
+      signPermissions_2: signIds.value.signPermissions_2,
+      signPermissions_3: signIds.value.signPermissions_3,
+    };
+    await store.fetchData(
+      payload,
+      `/roles/${selected.value.roleId}/signPermissions`,
+      'PUT'
+    );
+    store.myAlert.fire({
+      title: 'Success',
+      text: 'Signature permissions updated successfully.',
+      icon: 'success',
+    });
+  } catch (error) {
+    store.myAlert.fire({
+      title: error.title || 'Error',
+      text: error.text || 'An unexpected error occurred.',
+      icon: error.icon || 'error',
+    });
+  }
+};
 </script>

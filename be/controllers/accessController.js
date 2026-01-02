@@ -110,4 +110,56 @@ module.exports = {
         .json({ title: "Server error", text: error.message, icon: "error" });
     }
   },
+  setSignPermission: async (req, res) => {
+    try {
+      const { roleId } = req.params;
+      const { signPermissions_1, signPermissions_2, signPermissions_3 } =
+        req.body;
+      const role = await roleDb.where("roleId", roleId).get();
+      if (role.length === 0) {
+        throw {
+          message: "Role not found.",
+        };
+      }
+      await roleDb
+        .where("roleId", roleId)
+        .update({ signPermissions_1, signPermissions_2, signPermissions_3 });
+      return res.status(200).json({
+        title: "Sign Permissions Updated",
+        text: "Sign permissions updated successfully.",
+        icon: "success",
+      });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .json({ title: "Server error", text: error.message, icon: "error" });
+    }
+  },
+  getSignPermission: async (req, res) => {
+    try {
+      const { roleId } = req.params;
+      const role = await roleDb.where("roleId", roleId).get();
+      if (role.length === 0) {
+        throw {
+          message: "Role not found.",
+        };
+      }
+      return res.status(200).json({
+        title: "Sign Permissions Retrieved",
+        text: "Sign permissions retrieved successfully.",
+        icon: "success",
+        data: {
+          signPermissions_1: role[0].signPermissions_1,
+          signPermissions_2: role[0].signPermissions_2,
+          signPermissions_3: role[0].signPermissions_3,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .json({ title: "Server error", text: error.message, icon: "error" });
+    }
+  },
 };
